@@ -1,0 +1,46 @@
+services:
+    service-booking:
+        build: .
+        container_name: service-booking
+        ports:
+            - "8080:8080"
+        environment:
+            - PORT=8080
+
+            - POSTGRES_HOST=booking-database
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=postgres
+            - POSTGRES_DB=booking_db
+
+            - JWT_SECRET=super_secret_default_key_123
+            - JWT_TTL=24h
+        depends_on:
+            booking-database:
+                condition: service_healthy
+        networks:
+            - booking
+
+    booking-database:
+        image: postgres:15
+        container_name: booking-database
+        environment:
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=postgres
+            - POSTGRES_DB=booking_db
+        ports:
+            - "5432:5432"
+        volumes:
+            - pgdata:/var/lib/postgresql/data
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U postgres -d booking_db"]
+            interval: 5s
+            timeout: 5s
+            retries: 5
+        networks:
+            - booking
+
+networks:
+    booking:
+
+volumes:
+    pgdata:
