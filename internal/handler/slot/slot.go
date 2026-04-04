@@ -25,6 +25,21 @@ func NewController(service slotService, logger logger.Logger) *Controller {
 	}
 }
 
+// GetAvailableSlots godoc
+// @Summary      Список доступных для бронирования слотов по переговорке и дате (admin и user). Наиболее нагруженный эндпоинт.
+// @Description  Возвращает слоты, не занятые активной бронью, для указанной переговорки на указанную дату. Все даты и время передаются и возвращаются в UTC. Параметр date является обязательным; при его отсутствии возвращается 400. Если у переговорки нет расписания — возвращается пустой список (переговорка считается всегда недоступной).
+// @Tags         Slots
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        roomId  path      string  true  "Идентификатор переговорки (UUID)" format(uuid)
+// @Param        date    query     string  true  "Дата в формате ISO 8601 (например: 2024-06-10). Обязательный параметр." format(date)
+// @Success      200  {object}  map[string]any "Список доступных слотов"
+// @Failure      400  {object}  map[string]any "Неверный запрос (отсутствует или некорректен параметр date)"
+// @Failure      401  {object}  map[string]any "Не авторизован"
+// @Failure      404  {object}  map[string]any "Переговорка не найдена"
+// @Failure      500  {object}  map[string]any "Внутренняя ошибка сервера"
+// @Router       /rooms/{roomId}/slots/list [get]
 func (c *Controller) GetAvailableSlots(w http.ResponseWriter, r *http.Request) {
 	roomIDStr := chi.URLParam(r, "roomId")
 	roomID, err := uuid.Parse(roomIDStr)

@@ -19,3 +19,11 @@ type Response struct {
 	ConferenceLink string    `json:"conference_link,omitempty"`
 	CreatedAt      time.Time `json:"created_at"`
 }
+
+type BookingCreateResponse struct {
+	Booking Response `json:"booking"`
+}
+
+type ErrorResponse struct {
+	Error string `json:"error" example:"текст ошибки или причина отказа"`
+}

@@ -1,0 +1,563 @@
+basePath: /
+definitions:
+  github_com_internships-backend_test-backend-barashF_internal_handler_dto_auth.AuthResponse:
+    properties:
+      access_token:
+        type: string
+    type: object
+  github_com_internships-backend_test-backend-barashF_internal_handler_dto_auth.DummyLoginRequest:
+    properties:
+      role:
+        type: string
+    type: object
+  github_com_internships-backend_test-backend-barashF_internal_handler_dto_auth.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  github_com_internships-backend_test-backend-barashF_internal_handler_dto_auth.RegisterRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      role:
+        type: string
+    type: object
+  github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.BookingCreateResponse:
+    properties:
+      booking:
+        $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.Response'
+    type: object
+  github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.CreateRequest:
+    properties:
+      create_conference_link:
+        type: boolean
+      slot_id:
+        type: string
+    type: object
+  github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.ErrorResponse:
+    properties:
+      error:
+        example: текст ошибки или причина отказа
+        type: string
+    type: object
+  github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.Response:
+    properties:
+      conference_link:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      slot_id:
+        type: string
+      status:
+        type: string
+      user_id:
+        type: string
+    type: object
+  github_com_internships-backend_test-backend-barashF_internal_handler_dto_room.CreateRequest:
+    properties:
+      capacity:
+        type: integer
+      description:
+        type: string
+      name:
+        type: string
+    type: object
+  github_com_internships-backend_test-backend-barashF_internal_handler_dto_schedule.CreateRequest:
+    properties:
+      days_of_week:
+        items:
+          type: integer
+        type: array
+      end_time:
+        type: string
+      start_time:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: Сервис бронирования переговорок
+  termsOfService: http://swagger.io/terms/
+  title: Room Booking Service
+  version: "1.0"
+paths:
+  /bookings/{bookingId}/cancel:
+    post:
+      consumes:
+      - application/json
+      description: Доступно только роли user. Пользователь может отменить только свою
+        бронь.
+      parameters:
+      - description: Идентификатор брони (UUID)
+        format: uuid
+        in: path
+        name: bookingId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Бронь отменена (или уже была отменена ранее)
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Неверный формат ID брони
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Не авторизован
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Не своя бронь или роль не user
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Бронь не найдена
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Отменить бронь (только своя бронь, только user)
+      tags:
+      - Bookings
+  /bookings/create:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Данные для создания бронирования
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.CreateRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Бронь создана
+          schema:
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.BookingCreateResponse'
+        "400":
+          description: Неверный запрос
+          schema:
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.ErrorResponse'
+        "401":
+          description: Не авторизован
+          schema:
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.ErrorResponse'
+        "403":
+          description: Доступ запрещён (бронирование доступно только роли user)
+          schema:
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.ErrorResponse'
+        "404":
+          description: Слот не найден
+          schema:
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.ErrorResponse'
+        "409":
+          description: Слот уже занят
+          schema:
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Создать бронь на слот (только user).
+      tags:
+      - Bookings
+  /bookings/list:
+    get:
+      consumes:
+      - application/json
+      description: Доступно только роли admin. Поддерживает пагинацию.
+      parameters:
+      - default: 1
+        description: Номер страницы (начиная с 1). По умолчанию 1.
+        in: query
+        minimum: 1
+        name: page
+        type: integer
+      - default: 20
+        description: Количество записей на странице. По умолчанию 20, максимум 100.
+        in: query
+        maximum: 100
+        minimum: 1
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список всех броней и метаданные пагинации
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Неверный запрос (некорректные параметры пагинации)
+          schema:
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.ErrorResponse'
+        "401":
+          description: Не авторизован
+          schema:
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.ErrorResponse'
+        "403":
+          description: Доступ запрещён (только admin)
+          schema:
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Список всех броней с пагинацией (только admin)
+      tags:
+      - Bookings
+  /bookings/my:
+    get:
+      consumes:
+      - application/json
+      description: Доступно только роли user. Возвращает брони пользователя.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список броней текущего пользователя
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Не авторизован
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Доступ запрещён (только user)
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Список броней текущего пользователя (только user)
+      tags:
+      - Bookings
+  /dummyLogin:
+    post:
+      consumes:
+      - application/json
+      description: Выдаёт тестовый JWT для указанной роли (admin / user).
+      parameters:
+      - description: Запрос на получение тестового токена
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_auth.DummyLoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Тестовый токен
+          schema:
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_auth.AuthResponse'
+        "400":
+          description: Неверный запрос (недопустимое значение роли)
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Получить тестовый JWT по роли. Доступен без авторизации.
+      tags:
+      - Auth
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Авторизует пользователя по email и паролю, возвращает JWT.
+      parameters:
+      - description: Учетные данные пользователя
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_auth.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешная авторизация (возвращает токен)
+          schema:
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_auth.AuthResponse'
+        "400":
+          description: Неверный формат запроса
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Неверные учётные данные
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Авторизация по email и паролю
+      tags:
+      - Auth
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: Создаёт нового пользователя и возвращает его id.
+      parameters:
+      - description: Данные для регистрации пользователя
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_auth.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Пользователь создан
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Неверный запрос или email уже занят
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Регистрация пользователя
+      tags:
+      - Auth
+  /rooms/{roomId}/schedule/create:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Идентификатор переговорки (UUID)
+        format: uuid
+        in: path
+        name: roomId
+        required: true
+        type: string
+      - description: Данные для создания расписания
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_schedule.CreateRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Расписание сохранено
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Неверный запрос (в т.ч. недопустимые значения daysOfWeek)
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Не авторизован
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Доступ запрещён (требуется роль admin)
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Переговорка не найдена
+          schema:
+            additionalProperties: true
+            type: object
+        "409":
+          description: Расписание для переговорки уже создано, изменение не допускается
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Создать расписание переговорки (только admin, только один раз). Длительность
+        слота 30 мин.
+      tags:
+      - Schedules
+  /rooms/{roomId}/slots/list:
+    get:
+      consumes:
+      - application/json
+      description: Возвращает слоты, не занятые активной бронью, для указанной переговорки
+        на указанную дату. Все даты и время передаются и возвращаются в UTC. Параметр
+        date является обязательным; при его отсутствии возвращается 400. Если у переговорки
+        нет расписания — возвращается пустой список (переговорка считается всегда
+        недоступной).
+      parameters:
+      - description: Идентификатор переговорки (UUID)
+        format: uuid
+        in: path
+        name: roomId
+        required: true
+        type: string
+      - description: 'Дата в формате ISO 8601 (например: 2024-06-10). Обязательный
+          параметр.'
+        format: date
+        in: query
+        name: date
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список доступных слотов
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Неверный запрос (отсутствует или некорректен параметр date)
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Не авторизован
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Переговорка не найдена
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Список доступных для бронирования слотов по переговорке и дате (admin
+        и user). Наиболее нагруженный эндпоинт.
+      tags:
+      - Slots
+  /rooms/create:
+    post:
+      consumes:
+      - application/json
+      description: Создает новую переговорную комнату.
+      parameters:
+      - description: Данные для создания комнаты
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_room.CreateRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Переговорка создана
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Неверный запрос
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Не авторизован
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Доступ запрещён (требуется роль admin)
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Создать переговорку (только admin)
+      tags:
+      - Rooms
+  /rooms/list:
+    get:
+      consumes:
+      - application/json
+      description: Возвращает список всех доступных переговорных комнат.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список переговорок
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Не авторизован
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Список переговорок (admin и user)
+      tags:
+      - Rooms
+swagger: "2.0"

@@ -18,7 +18,7 @@ var (
 
 var (
 	ErrValidationFailed         = errors.New("provided data failed validation")
-	ErrIsBooking                = errors.New("slot already is booking")
+	ErrIsBooking                = errors.New("slot is already booked")
 	ErrBookingOwnershipRequired = errors.New("cannot cancel another user's booking")
 	ErrInvalidPagination        = errors.New("invalid pagination")
 )

@@ -11,6 +11,9 @@ import (
 	"syscall"
 	"time"
 
+	_ "github.com/internships-backend/test-backend-barashF/docs"
+	httpSwagger "github.com/swaggo/http-swagger"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/internships-backend/test-backend-barashF/internal/config"
 	"github.com/internships-backend/test-backend-barashF/internal/gateway"
@@ -37,6 +40,13 @@ import (
 	"github.com/joho/godotenv"
 )
 
+// @title           Room Booking Service
+// @version         1.0
+// @description     Сервис бронирования переговорок
+// @termsOfService  http://swagger.io/terms/
+
+// @host      localhost:8080
+// @BasePath  /
 func main() {
 	appLogger, err := logger.NewZapAdapter()
 	if err != nil {
@@ -142,6 +152,7 @@ func initRouter(auth *authHandler.Controller,
 ) *chi.Mux {
 	r := chi.NewRouter()
 
+	r.Get("/swagger/*", httpSwagger.WrapHandler)
 	r.Get("/_info", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)

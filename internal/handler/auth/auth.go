@@ -23,6 +23,17 @@ func NewController(service authService, logger logger.Logger) *Controller {
 	}
 }
 
+// Register godoc
+// @Summary      Регистрация пользователя
+// @Description  Создаёт нового пользователя и возвращает его id.
+// @Tags         Auth
+// @Accept       json
+// @Produce      json
+// @Param        request body      dto.RegisterRequest  true  "Данные для регистрации пользователя"
+// @Success      201  {object}  map[string]any "Пользователь создан"
+// @Failure      400  {object}  map[string]any "Неверный запрос или email уже занят"
+// @Failure      500  {object}  map[string]any "Внутренняя ошибка сервера"
+// @Router       /register [post]
 func (c *Controller) Register(w http.ResponseWriter, r *http.Request) {
 	var req dto.RegisterRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -61,6 +72,18 @@ func (c *Controller) Register(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// Login godoc
+// @Summary      Авторизация по email и паролю
+// @Description  Авторизует пользователя по email и паролю, возвращает JWT.
+// @Tags         Auth
+// @Accept       json
+// @Produce      json
+// @Param        request body      dto.LoginRequest  true  "Учетные данные пользователя"
+// @Success      200  {object}  dto.AuthResponse "Успешная авторизация (возвращает токен)"
+// @Failure      400  {object}  map[string]any "Неверный формат запроса"
+// @Failure      401  {object}  map[string]any "Неверные учётные данные"
+// @Failure      500  {object}  map[string]any "Внутренняя ошибка сервера"
+// @Router       /login [post]
 func (c *Controller) Login(w http.ResponseWriter, r *http.Request) {
 	var req dto.LoginRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -81,6 +104,17 @@ func (c *Controller) Login(w http.ResponseWriter, r *http.Request) {
 	c.writeJSON(w, http.StatusOK, dto.AuthResponse{AccessToken: token})
 }
 
+// DummyLogin godoc
+// @Summary      Получить тестовый JWT по роли. Доступен без авторизации.
+// @Description  Выдаёт тестовый JWT для указанной роли (admin / user).
+// @Tags         Auth
+// @Accept       json
+// @Produce      json
+// @Param        request body      dto.DummyLoginRequest  true  "Запрос на получение тестового токена"
+// @Success      200  {object}  dto.AuthResponse "Тестовый токен"
+// @Failure      400  {object}  map[string]any "Неверный запрос (недопустимое значение роли)"
+// @Failure      500  {object}  map[string]any "Внутренняя ошибка сервера"
+// @Router       /dummyLogin [post]
 func (c *Controller) DummyLogin(w http.ResponseWriter, r *http.Request) {
 	var req dto.DummyLoginRequest
 
