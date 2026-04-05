@@ -34,11 +34,11 @@ func NewController(service slotService, logger logger.Logger) *Controller {
 // @Security     BearerAuth
 // @Param        roomId  path      string  true  "Идентификатор переговорки (UUID)" format(uuid)
 // @Param        date    query     string  true  "Дата в формате ISO 8601 (например: 2024-06-10). Обязательный параметр." format(date)
-// @Success      200  {object}  map[string]any "Список доступных слотов"
-// @Failure      400  {object}  map[string]any "Неверный запрос (отсутствует или некорректен параметр date)"
-// @Failure      401  {object}  map[string]any "Не авторизован"
-// @Failure      404  {object}  map[string]any "Переговорка не найдена"
-// @Failure      500  {object}  map[string]any "Внутренняя ошибка сервера"
+// @Success      200  {object}  dto.SlotListResponse "Список доступных слотов"
+// @Failure      400  {object}  dto.ErrorResponse "Неверный запрос (отсутствует или некорректен параметр date)"
+// @Failure      401  {object}  dto.ErrorResponse "Не авторизован"
+// @Failure      404  {object}  dto.ErrorResponse "Переговорка не найдена"
+// @Failure      500  {object}  dto.ErrorResponse "Внутренняя ошибка сервера"
 // @Router       /rooms/{roomId}/slots/list [get]
 func (c *Controller) GetAvailableSlots(w http.ResponseWriter, r *http.Request) {
 	roomIDStr := chi.URLParam(r, "roomId")

@@ -10,6 +10,12 @@ definitions:
       role:
         type: string
     type: object
+  github_com_internships-backend_test-backend-barashF_internal_handler_dto_auth.ErrorResponse:
+    properties:
+      error:
+        example: текст ошибки или причина отказа
+        type: string
+    type: object
   github_com_internships-backend_test-backend-barashF_internal_handler_dto_auth.LoginRequest:
     properties:
       email:
@@ -26,10 +32,33 @@ definitions:
       role:
         type: string
     type: object
+  github_com_internships-backend_test-backend-barashF_internal_handler_dto_auth.RegisterResponse:
+    properties:
+      id:
+        type: string
+      message:
+        type: string
+    type: object
   github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.BookingCreateResponse:
     properties:
       booking:
         $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.Response'
+    type: object
+  github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.BookingListPaginatationResponse:
+    properties:
+      bookings:
+        items:
+          $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.Response'
+        type: array
+      total_count:
+        type: integer
+    type: object
+  github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.BookingListResponse:
+    properties:
+      bookings:
+        items:
+          $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.Response'
+        type: array
     type: object
   github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.CreateRequest:
     properties:
@@ -68,6 +97,35 @@ definitions:
       name:
         type: string
     type: object
+  github_com_internships-backend_test-backend-barashF_internal_handler_dto_room.ErrorResponse:
+    properties:
+      error:
+        example: текст ошибки или причина отказа
+        type: string
+    type: object
+  github_com_internships-backend_test-backend-barashF_internal_handler_dto_room.RoomCreateResponse:
+    properties:
+      id:
+        type: string
+    type: object
+  github_com_internships-backend_test-backend-barashF_internal_handler_dto_room.RoomListResponse:
+    properties:
+      rooms:
+        items:
+          $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_room.RoomResponse'
+        type: array
+    type: object
+  github_com_internships-backend_test-backend-barashF_internal_handler_dto_room.RoomResponse:
+    properties:
+      capacity:
+        type: integer
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+    type: object
   github_com_internships-backend_test-backend-barashF_internal_handler_dto_schedule.CreateRequest:
     properties:
       days_of_week:
@@ -77,6 +135,43 @@ definitions:
       end_time:
         type: string
       start_time:
+        type: string
+    type: object
+  github_com_internships-backend_test-backend-barashF_internal_handler_dto_schedule.CreateResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  github_com_internships-backend_test-backend-barashF_internal_handler_dto_schedule.ErrorResponse:
+    properties:
+      error:
+        example: текст ошибки или причина отказа
+        type: string
+    type: object
+  github_com_internships-backend_test-backend-barashF_internal_handler_dto_slot.ErrorResponse:
+    properties:
+      error:
+        example: текст ошибки или причина отказа
+        type: string
+    type: object
+  github_com_internships-backend_test-backend-barashF_internal_handler_dto_slot.SlotListResponse:
+    properties:
+      slots:
+        items:
+          $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_slot.SlotResponse'
+        type: array
+    type: object
+  github_com_internships-backend_test-backend-barashF_internal_handler_dto_slot.SlotResponse:
+    properties:
+      end:
+        type: string
+      id:
+        type: string
+      is_booked:
+        type: boolean
+      room_id:
+        type: string
+      start:
         type: string
     type: object
 host: localhost:8080
@@ -106,33 +201,27 @@ paths:
         "200":
           description: Бронь отменена (или уже была отменена ранее)
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.BookingCreateResponse'
         "400":
           description: Неверный формат ID брони
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.ErrorResponse'
         "401":
           description: Не авторизован
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.ErrorResponse'
         "403":
           description: Не своя бронь или роль не user
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.ErrorResponse'
         "404":
           description: Бронь не найдена
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.ErrorResponse'
         "500":
           description: Внутренняя ошибка сервера
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Отменить бронь (только своя бронь, только user)
@@ -210,8 +299,7 @@ paths:
         "200":
           description: Список всех броней и метаданные пагинации
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.BookingListPaginatationResponse'
         "400":
           description: Неверный запрос (некорректные параметры пагинации)
           schema:
@@ -244,23 +332,19 @@ paths:
         "200":
           description: Список броней текущего пользователя
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.BookingListResponse'
         "401":
           description: Не авторизован
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.ErrorResponse'
         "403":
           description: Доступ запрещён (только user)
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.ErrorResponse'
         "500":
           description: Внутренняя ошибка сервера
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Список броней текущего пользователя (только user)
@@ -288,13 +372,11 @@ paths:
         "400":
           description: Неверный запрос (недопустимое значение роли)
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_auth.ErrorResponse'
         "500":
           description: Внутренняя ошибка сервера
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_auth.ErrorResponse'
       summary: Получить тестовый JWT по роли. Доступен без авторизации.
       tags:
       - Auth
@@ -320,18 +402,15 @@ paths:
         "400":
           description: Неверный формат запроса
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_auth.ErrorResponse'
         "401":
           description: Неверные учётные данные
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_auth.ErrorResponse'
         "500":
           description: Внутренняя ошибка сервера
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_auth.ErrorResponse'
       summary: Авторизация по email и паролю
       tags:
       - Auth
@@ -353,18 +432,15 @@ paths:
         "201":
           description: Пользователь создан
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_auth.RegisterResponse'
         "400":
           description: Неверный запрос или email уже занят
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_auth.ErrorResponse'
         "500":
           description: Внутренняя ошибка сервера
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_auth.ErrorResponse'
       summary: Регистрация пользователя
       tags:
       - Auth
@@ -391,39 +467,31 @@ paths:
         "201":
           description: Расписание сохранено
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_schedule.CreateResponse'
         "400":
           description: Неверный запрос (в т.ч. недопустимые значения daysOfWeek)
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_schedule.ErrorResponse'
         "401":
           description: Не авторизован
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_schedule.ErrorResponse'
         "403":
           description: Доступ запрещён (требуется роль admin)
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_schedule.ErrorResponse'
         "404":
           description: Переговорка не найдена
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_schedule.ErrorResponse'
         "409":
           description: Расписание для переговорки уже создано, изменение не допускается
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_schedule.ErrorResponse'
         "500":
           description: Внутренняя ошибка сервера
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_schedule.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Создать расписание переговорки (только admin, только один раз). Длительность
@@ -459,28 +527,23 @@ paths:
         "200":
           description: Список доступных слотов
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_slot.SlotListResponse'
         "400":
           description: Неверный запрос (отсутствует или некорректен параметр date)
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_slot.ErrorResponse'
         "401":
           description: Не авторизован
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_slot.ErrorResponse'
         "404":
           description: Переговорка не найдена
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_slot.ErrorResponse'
         "500":
           description: Внутренняя ошибка сервера
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_slot.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Список доступных для бронирования слотов по переговорке и дате (admin
@@ -505,28 +568,23 @@ paths:
         "201":
           description: Переговорка создана
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_room.RoomCreateResponse'
         "400":
           description: Неверный запрос
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_room.ErrorResponse'
         "401":
           description: Не авторизован
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_room.ErrorResponse'
         "403":
           description: Доступ запрещён (требуется роль admin)
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_room.ErrorResponse'
         "500":
           description: Внутренняя ошибка сервера
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_room.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Создать переговорку (только admin)
@@ -543,18 +601,15 @@ paths:
         "200":
           description: Список переговорок
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_room.RoomListResponse'
         "401":
           description: Не авторизован
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_room.ErrorResponse'
         "500":
           description: Внутренняя ошибка сервера
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_room.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Список переговорок (admin и user)

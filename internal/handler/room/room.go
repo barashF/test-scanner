@@ -33,11 +33,11 @@ func NewController(service roomService, logger logger.Logger) *Controller {
 // @Produce      json
 // @Security     BearerAuth
 // @Param        request body      dto.CreateRequest  true  "Данные для создания комнаты"
-// @Success      201  {object}  map[string]any "Переговорка создана"
-// @Failure      400  {object}  map[string]any "Неверный запрос"
-// @Failure      401  {object}  map[string]any "Не авторизован"
-// @Failure      403  {object}  map[string]any "Доступ запрещён (требуется роль admin)"
-// @Failure      500  {object}  map[string]any "Внутренняя ошибка сервера"
+// @Success      201  {object}  dto.RoomCreateResponse "Переговорка создана"
+// @Failure      400  {object}  dto.ErrorResponse "Неверный запрос"
+// @Failure      401  {object}  dto.ErrorResponse "Не авторизован"
+// @Failure      403  {object}  dto.ErrorResponse "Доступ запрещён (требуется роль admin)"
+// @Failure      500  {object}  dto.ErrorResponse "Внутренняя ошибка сервера"
 // @Router       /rooms/create [post]
 func (c *Controller) Create(w http.ResponseWriter, r *http.Request) {
 	var req dto.CreateRequest
@@ -84,9 +84,9 @@ func (c *Controller) Create(w http.ResponseWriter, r *http.Request) {
 // @Accept       json
 // @Produce      json
 // @Security     BearerAuth
-// @Success      200  {object}  map[string]any "Список переговорок"
-// @Failure      401  {object}  map[string]any "Не авторизован"
-// @Failure      500  {object}  map[string]any "Внутренняя ошибка сервера"
+// @Success      200  {object}  dto.RoomListResponse "Список переговорок"
+// @Failure      401  {object}  dto.ErrorResponse "Не авторизован"
+// @Failure      500  {object}  dto.ErrorResponse "Внутренняя ошибка сервера"
 // @Router       /rooms/list [get]
 func (c *Controller) List(w http.ResponseWriter, r *http.Request) {
 	rooms, err := c.roomService.List(r.Context())

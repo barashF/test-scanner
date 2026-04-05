@@ -1,0 +1,38 @@
+version: "2"
+
+run:
+    timeout: 5m
+    issues-exit-code: 1
+    tests: true
+
+output:
+    format: colored-line-number
+    print-issued-lines: true
+    print-linter-name: true
+
+linters:
+    disable-all: true
+    enable:
+        - errcheck
+        - ineffassign
+        - makezero
+        - staticcheck
+        - asciicheck
+        - govet
+
+linters-settings:
+    staticcheck:
+        checks: ["all", "-ST1000"]
+
+    gci:
+        custom-order: true
+        sections:
+            - standard
+            - default
+            - prefix(github.com/internships-backend/test-backend-barashF)
+
+issues:
+    exclude-dirs:
+        - migrations
+        - docs
+        - third_party

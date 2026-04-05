@@ -30,9 +30,9 @@ func NewController(service authService, logger logger.Logger) *Controller {
 // @Accept       json
 // @Produce      json
 // @Param        request body      dto.RegisterRequest  true  "Данные для регистрации пользователя"
-// @Success      201  {object}  map[string]any "Пользователь создан"
-// @Failure      400  {object}  map[string]any "Неверный запрос или email уже занят"
-// @Failure      500  {object}  map[string]any "Внутренняя ошибка сервера"
+// @Success      201  {object}  dto.RegisterResponse "Пользователь создан"
+// @Failure      400  {object}  dto.ErrorResponse "Неверный запрос или email уже занят"
+// @Failure      500  {object}  dto.ErrorResponse "Внутренняя ошибка сервера"
 // @Router       /register [post]
 func (c *Controller) Register(w http.ResponseWriter, r *http.Request) {
 	var req dto.RegisterRequest
@@ -80,9 +80,9 @@ func (c *Controller) Register(w http.ResponseWriter, r *http.Request) {
 // @Produce      json
 // @Param        request body      dto.LoginRequest  true  "Учетные данные пользователя"
 // @Success      200  {object}  dto.AuthResponse "Успешная авторизация (возвращает токен)"
-// @Failure      400  {object}  map[string]any "Неверный формат запроса"
-// @Failure      401  {object}  map[string]any "Неверные учётные данные"
-// @Failure      500  {object}  map[string]any "Внутренняя ошибка сервера"
+// @Failure      400  {object}  dto.ErrorResponse "Неверный формат запроса"
+// @Failure      401  {object}  dto.ErrorResponse "Неверные учётные данные"
+// @Failure      500  {object}  dto.ErrorResponse "Внутренняя ошибка сервера"
 // @Router       /login [post]
 func (c *Controller) Login(w http.ResponseWriter, r *http.Request) {
 	var req dto.LoginRequest
@@ -112,8 +112,8 @@ func (c *Controller) Login(w http.ResponseWriter, r *http.Request) {
 // @Produce      json
 // @Param        request body      dto.DummyLoginRequest  true  "Запрос на получение тестового токена"
 // @Success      200  {object}  dto.AuthResponse "Тестовый токен"
-// @Failure      400  {object}  map[string]any "Неверный запрос (недопустимое значение роли)"
-// @Failure      500  {object}  map[string]any "Внутренняя ошибка сервера"
+// @Failure      400  {object}  dto.ErrorResponse "Неверный запрос (недопустимое значение роли)"
+// @Failure      500  {object}  dto.ErrorResponse "Внутренняя ошибка сервера"
 // @Router       /dummyLogin [post]
 func (c *Controller) DummyLogin(w http.ResponseWriter, r *http.Request) {
 	var req dto.DummyLoginRequest

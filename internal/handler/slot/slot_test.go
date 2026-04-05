@@ -3,6 +3,7 @@ package slot_test
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -27,7 +28,9 @@ func (n noOpLogger) Sync() error                       { return nil }
 
 func TestController_GetAvailableSlots(t *testing.T) {
 	roomID := uuid.New()
-	fixedDate, _ := time.Parse("2006-01-02", "2026-04-04")
+
+	today := time.Now().UTC().Format("2006-01-02")
+	fixedDate, _ := time.Parse("2006-01-02", today)
 
 	tests := []struct {
 		name           string
@@ -39,7 +42,7 @@ func TestController_GetAvailableSlots(t *testing.T) {
 		{
 			name:        "Success",
 			roomIDParam: roomID.String(),
-			query:       "?date=2026-04-04",
+			query:       fmt.Sprintf("?date=%s", today),
 			mockBehavior: func(s *mocks.MockslotService) {
 				s.EXPECT().
 					GetAvailableSlotsByDate(gomock.Any(), roomID, fixedDate).
@@ -52,14 +55,14 @@ func TestController_GetAvailableSlots(t *testing.T) {
 		{
 			name:           "Invalid Room UUID",
 			roomIDParam:    "not-a-uuid",
-			query:          "?date=2026-04-04",
+			query:          fmt.Sprintf("?date=%s", today),
 			mockBehavior:   func(s *mocks.MockslotService) {},
 			expectedStatus: http.StatusBadRequest,
 		},
 		{
 			name:        "Service Error",
 			roomIDParam: roomID.String(),
-			query:       "?date=2026-04-04",
+			query:       fmt.Sprintf("?date=%s", today),
 			mockBehavior: func(s *mocks.MockslotService) {
 				s.EXPECT().
 					GetAvailableSlotsByDate(gomock.Any(), gomock.Any(), gomock.Any()).
@@ -70,7 +73,7 @@ func TestController_GetAvailableSlots(t *testing.T) {
 		{
 			name:        "Slots Not Found",
 			roomIDParam: roomID.String(),
-			query:       "?date=2026-04-04",
+			query:       fmt.Sprintf("?date=%s", today),
 			mockBehavior: func(s *mocks.MockslotService) {
 				s.EXPECT().
 					GetAvailableSlotsByDate(gomock.Any(), gomock.Any(), gomock.Any()).

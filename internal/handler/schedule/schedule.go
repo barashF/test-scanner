@@ -33,13 +33,13 @@ func NewController(service scheduleService, logger logger.Logger) *Controller {
 // @Security     BearerAuth
 // @Param        roomId   path      string              true  "Идентификатор переговорки (UUID)" format(uuid)
 // @Param        request  body      dto.CreateRequest   true  "Данные для создания расписания"
-// @Success      201  {object}  map[string]string "Расписание сохранено"
-// @Failure      400  {object}  map[string]any    "Неверный запрос (в т.ч. недопустимые значения daysOfWeek)"
-// @Failure      401  {object}  map[string]any    "Не авторизован"
-// @Failure      403  {object}  map[string]any    "Доступ запрещён (требуется роль admin)"
-// @Failure      404  {object}  map[string]any    "Переговорка не найдена"
-// @Failure      409  {object}  map[string]any    "Расписание для переговорки уже создано, изменение не допускается"
-// @Failure      500  {object}  map[string]any    "Внутренняя ошибка сервера"
+// @Success      201  {object}  dto.CreateResponse "Расписание сохранено"
+// @Failure      400  {object}  dto.ErrorResponse    "Неверный запрос (в т.ч. недопустимые значения daysOfWeek)"
+// @Failure      401  {object}  dto.ErrorResponse   "Не авторизован"
+// @Failure      403  {object}  dto.ErrorResponse    "Доступ запрещён (требуется роль admin)"
+// @Failure      404  {object}  dto.ErrorResponse    "Переговорка не найдена"
+// @Failure      409  {object}  dto.ErrorResponse    "Расписание для переговорки уже создано, изменение не допускается"
+// @Failure      500  {object}  dto.ErrorResponse    "Внутренняя ошибка сервера"
 // @Router       /rooms/{roomId}/schedule/create [post]
 func (c *Controller) Create(w http.ResponseWriter, r *http.Request) {
 	roomIDStr := chi.URLParam(r, "roomId")

@@ -90,7 +90,7 @@ func (tm *manager) GetConn(ctx context.Context) (conn Connection, err error) {
 func (tm *manager) isTransactionRequired(ctx context.Context) (bool, error) {
 	required, ok := ctx.Value(txRequiredKey{}).(bool)
 	if ok {
-		if required == true {
+		if required {
 			tx := tm.getTx(ctx)
 			if tx == nil {
 				return false, errors.New("transaction required, but not found")

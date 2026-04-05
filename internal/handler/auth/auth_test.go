@@ -91,6 +91,7 @@ func TestController_Register(t *testing.T) {
 			if s, ok := tt.requestBody.(string); ok {
 				buf.WriteString(s)
 			} else {
+				//nolint:errcheck
 				json.NewEncoder(&buf).Encode(tt.requestBody)
 			}
 
@@ -131,6 +132,7 @@ func TestController_Login(t *testing.T) {
 		}
 
 		var resp dto.AuthResponse
+		//nolint:errcheck
 		json.NewDecoder(rr.Body).Decode(&resp)
 		if resp.AccessToken != token {
 			t.Errorf("expected token %s, got %s", token, resp.AccessToken)

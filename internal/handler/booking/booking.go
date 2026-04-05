@@ -80,7 +80,7 @@ func (c *Controller) Create(w http.ResponseWriter, r *http.Request) {
 // @Security     BearerAuth
 // @Param        page      query     int  false  "Номер страницы (начиная с 1). По умолчанию 1." minimum(1) default(1)
 // @Param        pageSize  query     int  false  "Количество записей на странице. По умолчанию 20, максимум 100." minimum(1) maximum(100) default(20)
-// @Success      200  {object}  map[string]any "Список всех броней и метаданные пагинации"
+// @Success      200  {object}  dto.BookingListPaginatationResponse "Список всех броней и метаданные пагинации"
 // @Failure      400  {object}  dto.ErrorResponse "Неверный запрос (некорректные параметры пагинации)"
 // @Failure      401  {object}  dto.ErrorResponse "Не авторизован"
 // @Failure      403  {object}  dto.ErrorResponse "Доступ запрещён (только admin)"
@@ -131,10 +131,10 @@ func (c *Controller) GetAllBookings(w http.ResponseWriter, r *http.Request) {
 // @Accept       json
 // @Produce      json
 // @Security     BearerAuth
-// @Success      200  {object}  map[string]any "Список броней текущего пользователя"
-// @Failure      401  {object}  map[string]any "Не авторизован"
-// @Failure      403  {object}  map[string]any "Доступ запрещён (только user)"
-// @Failure      500  {object}  map[string]any "Внутренняя ошибка сервера"
+// @Success      200  {object}  dto.BookingListResponse "Список броней текущего пользователя"
+// @Failure      401  {object}  dto.ErrorResponse "Не авторизован"
+// @Failure      403  {object}  dto.ErrorResponse "Доступ запрещён (только user)"
+// @Failure      500  {object}  dto.ErrorResponse "Внутренняя ошибка сервера"
 // @Router       /bookings/my [get]
 func (c *Controller) GetUserBookings(w http.ResponseWriter, r *http.Request) {
 	userData := r.Context().Value(middleware.UserContextKey).(middleware.UserData)
@@ -164,12 +164,12 @@ func (c *Controller) GetUserBookings(w http.ResponseWriter, r *http.Request) {
 // @Produce      json
 // @Security     BearerAuth
 // @Param        bookingId  path      string  true  "Идентификатор брони (UUID)" format(uuid)
-// @Success      200  {object}  map[string]any "Бронь отменена (или уже была отменена ранее)"
-// @Failure      400  {object}  map[string]any "Неверный формат ID брони"
-// @Failure      401  {object}  map[string]any "Не авторизован"
-// @Failure      403  {object}  map[string]any "Не своя бронь или роль не user"
-// @Failure      404  {object}  map[string]any "Бронь не найдена"
-// @Failure      500  {object}  map[string]any "Внутренняя ошибка сервера"
+// @Success      200  {object}  dto.BookingCreateResponse "Бронь отменена (или уже была отменена ранее)"
+// @Failure      400  {object}  dto.ErrorResponse "Неверный формат ID брони"
+// @Failure      401  {object}  dto.ErrorResponse "Не авторизован"
+// @Failure      403  {object}  dto.ErrorResponse "Не своя бронь или роль не user"
+// @Failure      404  {object}  dto.ErrorResponse "Бронь не найдена"
+// @Failure      500  {object}  dto.ErrorResponse "Внутренняя ошибка сервера"
 // @Router       /bookings/{bookingId}/cancel [post]
 func (c *Controller) CancelBooking(w http.ResponseWriter, r *http.Request) {
 	userData := r.Context().Value(middleware.UserContextKey).(middleware.UserData)

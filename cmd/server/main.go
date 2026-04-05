@@ -52,15 +52,21 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed initialize logger: %v", err)
 	}
+
+	//nolint:errcheck
 	defer appLogger.Sync()
 
 	err = godotenv.Load()
 	if err != nil {
-		appLogger.Warn("Error loading .env file", logger.F("error", err.Error()))
+		appLogger.Warn("error loading .env file", logger.F("error", err.Error()))
 	}
 
 	dbPool := database.MustInitDB()
-	database.SeedUsers(context.Background(), dbPool, appLogger)
+
+	err = database.SeedUsers(context.Background(), dbPool, appLogger)
+	if err != nil {
+		appLogger.Warn("err create test users in database", logger.F("error", err.Error()))
+	}
 
 	transactionManager := transaction.NewManager(dbPool)
 
@@ -156,6 +162,7 @@ func initRouter(auth *authHandler.Controller,
 	r.Get("/_info", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
+		//nolint:errcheck
 		w.Write([]byte(`{"status":"OK"}`))
 	})
 
@@ -169,7 +176,7 @@ func initRouter(auth *authHandler.Controller,
 		r.With(middleware.RolesAllowed(logger, "admin")).Post("/{roomId}/schedule/create", schedule.Create)
 		r.With(middleware.RolesAllowed(logger, "admin")).Post("/create", room.Create)
 
-		r.Post("/list", room.List)
+		r.Get("/list", room.List)
 		r.Get("/{roomId}/slots/list", slot.GetAvailableSlots)
 	})
 

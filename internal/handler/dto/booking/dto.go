@@ -24,6 +24,15 @@ type BookingCreateResponse struct {
 	Booking Response `json:"booking"`
 }
 
+type BookingListResponse struct {
+	Bookings []Response `json:"bookings"`
+}
+
+type BookingListPaginatationResponse struct {
+	Bookings   []Response `json:"bookings"`
+	TotalCount int        `json:"total_count"`
+}
+
 type ErrorResponse struct {
 	Error string `json:"error" example:"текст ошибки или причина отказа"`
 }

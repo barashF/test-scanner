@@ -14,3 +14,15 @@ type RoomResponse struct {
 	Description string    `json:"description"`
 	Capacity    int       `json:"capacity"`
 }
+
+type RoomCreateResponse struct {
+	ID uuid.UUID `json:"id"`
+}
+
+type RoomListResponse struct {
+	Rooms []RoomResponse `json:"rooms"`
+}
+
+type ErrorResponse struct {
+	Error string `json:"error" example:"текст ошибки или причина отказа"`
+}

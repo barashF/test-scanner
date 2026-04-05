@@ -13,3 +13,11 @@ type SlotResponse struct {
 	End      time.Time `json:"end"`
 	IsBooked bool      `json:"is_booked"`
 }
+
+type SlotListResponse struct {
+	Slots []SlotResponse `json:"slots"`
+}
+
+type ErrorResponse struct {
+	Error string `json:"error" example:"текст ошибки или причина отказа"`
+}

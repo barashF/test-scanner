@@ -86,6 +86,7 @@ func TestController_Create(t *testing.T) {
 			if s, ok := tt.requestBody.(string); ok {
 				buf.WriteString(s)
 			} else {
+				//nolint:errcheck
 				json.NewEncoder(&buf).Encode(tt.requestBody)
 			}
 

@@ -131,8 +131,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Список всех броней и метаданные пагинации",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.BookingListPaginatationResponse"
                         }
                     },
                     "400": {
@@ -184,29 +183,25 @@ const docTemplate = `{
                     "200": {
                         "description": "Список броней текущего пользователя",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.BookingListResponse"
                         }
                     },
                     "401": {
                         "description": "Не авторизован",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Доступ запрещён (только user)",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Внутренняя ошибка сервера",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.ErrorResponse"
                         }
                     }
                 }
@@ -244,43 +239,37 @@ const docTemplate = `{
                     "200": {
                         "description": "Бронь отменена (или уже была отменена ранее)",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.BookingCreateResponse"
                         }
                     },
                     "400": {
                         "description": "Неверный формат ID брони",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Не авторизован",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Не своя бронь или роль не user",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Бронь не найдена",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Внутренняя ошибка сервера",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.ErrorResponse"
                         }
                     }
                 }
@@ -320,15 +309,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Неверный запрос (недопустимое значение роли)",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_auth.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Внутренняя ошибка сервера",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_auth.ErrorResponse"
                         }
                     }
                 }
@@ -368,22 +355,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Неверный формат запроса",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_auth.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Неверные учётные данные",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_auth.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Внутренняя ошибка сервера",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_auth.ErrorResponse"
                         }
                     }
                 }
@@ -417,22 +401,19 @@ const docTemplate = `{
                     "201": {
                         "description": "Пользователь создан",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_auth.RegisterResponse"
                         }
                     },
                     "400": {
                         "description": "Неверный запрос или email уже занят",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_auth.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Внутренняя ошибка сервера",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_auth.ErrorResponse"
                         }
                     }
                 }
@@ -471,36 +452,31 @@ const docTemplate = `{
                     "201": {
                         "description": "Переговорка создана",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_room.RoomCreateResponse"
                         }
                     },
                     "400": {
                         "description": "Неверный запрос",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_room.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Не авторизован",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_room.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Доступ запрещён (требуется роль admin)",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_room.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Внутренняя ошибка сервера",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_room.ErrorResponse"
                         }
                     }
                 }
@@ -528,22 +504,19 @@ const docTemplate = `{
                     "200": {
                         "description": "Список переговорок",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_room.RoomListResponse"
                         }
                     },
                     "401": {
                         "description": "Не авторизован",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_room.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Внутренняя ошибка сервера",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_room.ErrorResponse"
                         }
                     }
                 }
@@ -589,52 +562,43 @@ const docTemplate = `{
                     "201": {
                         "description": "Расписание сохранено",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_schedule.CreateResponse"
                         }
                     },
                     "400": {
                         "description": "Неверный запрос (в т.ч. недопустимые значения daysOfWeek)",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_schedule.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Не авторизован",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_schedule.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Доступ запрещён (требуется роль admin)",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_schedule.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Переговорка не найдена",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_schedule.ErrorResponse"
                         }
                     },
                     "409": {
                         "description": "Расписание для переговорки уже создано, изменение не допускается",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_schedule.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Внутренняя ошибка сервера",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_schedule.ErrorResponse"
                         }
                     }
                 }
@@ -680,36 +644,31 @@ const docTemplate = `{
                     "200": {
                         "description": "Список доступных слотов",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_slot.SlotListResponse"
                         }
                     },
                     "400": {
                         "description": "Неверный запрос (отсутствует или некорректен параметр date)",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_slot.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Не авторизован",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_slot.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Переговорка не найдена",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_slot.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Внутренняя ошибка сервера",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_slot.ErrorResponse"
                         }
                     }
                 }
@@ -730,6 +689,15 @@ const docTemplate = `{
             "properties": {
                 "role": {
                     "type": "string"
+                }
+            }
+        },
+        "github_com_internships-backend_test-backend-barashF_internal_handler_dto_auth.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "текст ошибки или причина отказа"
                 }
             }
         },
@@ -758,11 +726,47 @@ const docTemplate = `{
                 }
             }
         },
+        "github_com_internships-backend_test-backend-barashF_internal_handler_dto_auth.RegisterResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
         "github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.BookingCreateResponse": {
             "type": "object",
             "properties": {
                 "booking": {
                     "$ref": "#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.Response"
+                }
+            }
+        },
+        "github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.BookingListPaginatationResponse": {
+            "type": "object",
+            "properties": {
+                "bookings": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.Response"
+                    }
+                },
+                "total_count": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.BookingListResponse": {
+            "type": "object",
+            "properties": {
+                "bookings": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_booking.Response"
+                    }
                 }
             }
         },
@@ -823,6 +827,51 @@ const docTemplate = `{
                 }
             }
         },
+        "github_com_internships-backend_test-backend-barashF_internal_handler_dto_room.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "текст ошибки или причина отказа"
+                }
+            }
+        },
+        "github_com_internships-backend_test-backend-barashF_internal_handler_dto_room.RoomCreateResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_internships-backend_test-backend-barashF_internal_handler_dto_room.RoomListResponse": {
+            "type": "object",
+            "properties": {
+                "rooms": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_room.RoomResponse"
+                    }
+                }
+            }
+        },
+        "github_com_internships-backend_test-backend-barashF_internal_handler_dto_room.RoomResponse": {
+            "type": "object",
+            "properties": {
+                "capacity": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
         "github_com_internships-backend_test-backend-barashF_internal_handler_dto_schedule.CreateRequest": {
             "type": "object",
             "properties": {
@@ -836,6 +885,63 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "start_time": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_internships-backend_test-backend-barashF_internal_handler_dto_schedule.CreateResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_internships-backend_test-backend-barashF_internal_handler_dto_schedule.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "текст ошибки или причина отказа"
+                }
+            }
+        },
+        "github_com_internships-backend_test-backend-barashF_internal_handler_dto_slot.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "текст ошибки или причина отказа"
+                }
+            }
+        },
+        "github_com_internships-backend_test-backend-barashF_internal_handler_dto_slot.SlotListResponse": {
+            "type": "object",
+            "properties": {
+                "slots": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_internships-backend_test-backend-barashF_internal_handler_dto_slot.SlotResponse"
+                    }
+                }
+            }
+        },
+        "github_com_internships-backend_test-backend-barashF_internal_handler_dto_slot.SlotResponse": {
+            "type": "object",
+            "properties": {
+                "end": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "is_booked": {
+                    "type": "boolean"
+                },
+                "room_id": {
+                    "type": "string"
+                },
+                "start": {
                     "type": "string"
                 }
             }

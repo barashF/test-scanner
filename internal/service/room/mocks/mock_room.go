@@ -13,6 +13,7 @@ import (
 type MockroomRepository struct {
 	ctrl     *gomock.Controller
 	recorder *MockroomRepositoryMockRecorder
+	//nolint:unused
 	isgomock struct{}
 }
 
