@@ -1,0 +1,29 @@
+name: DevSecOps Security Scan
+
+# Настраиваем триггеры: пайплайн будет запускаться при каждом push в ветку main
+# и при создании Pull Request (когда кто-то хочет влить свой код в main)
+on:
+    push:
+        branches: ["main", "master"]
+    pull_request:
+        branches: ["main", "master"]
+
+jobs:
+    trivy-scan:
+        name: Run Trivy Scanner
+        runs-on: ubuntu-latest # Выделяем чистый сервер на Ubuntu для проверки
+
+        steps:
+            # Шаг 1: Скачиваем (клонируем) код твоего репозитория на сервер сборки
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            # Шаг 2: Запускаем Trivy для поиска захардкоженных секретов и паролей
+            - name: Run Trivy Vulnerability Scanner (FS and Secrets)
+              uses: aquasecurity/trivy-action@master
+              with:
+                  scan-type: "fs"
+                  scan-ref: "."
+                  scanners: "vuln,secret"
+                  severity: "HIGH,CRITICAL"
+                  exit-code: "1" # Пайплайн упадет (заблокируется), если найдет HIGH или CRITICAL баги

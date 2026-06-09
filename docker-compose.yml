@@ -4,6 +4,7 @@ services:
         container_name: service-booking
         ports:
             - "8080:8080"
+            - "6060:6060"
         environment:
             - PORT=8080
 
@@ -36,6 +37,52 @@ services:
             interval: 5s
             timeout: 5s
             retries: 5
+        command:
+            ["postgres", "-c", "shared_preload_libraries=pg_stat_statements"]
+        networks:
+            - booking
+
+    prometheus:
+        image: prom/prometheus
+        volumes:
+            - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+        ports:
+            - "9090:9090"
+        networks:
+            - booking
+
+    grafana:
+        image: grafana/grafana
+        volumes:
+            - ./grafana/provisioning:/etc/grafana/provisioning
+            - ./grafana/dashboards:/etc/grafana/dashboards
+        ports:
+            - "3000:3000"
+        networks:
+            - booking
+
+    redis:
+        image: redis:7.2-alpine
+        container_name: crm_redis
+        restart: always
+        ports:
+            - "6379:6379"
+        volumes:
+            - redis_data:/data
+        command: redis-server --appendonly yes --appendfsync everysec
+        networks:
+            - booking
+
+    redis-insight:
+        image: redis/redisinsight:latest
+        container_name: crm_redis_insight
+        restart: always
+        ports:
+            - "5540:5540"
+        volumes:
+            - redis_insight_data:/db
+        depends_on:
+            - redis
         networks:
             - booking
 
@@ -44,3 +91,5 @@ networks:
 
 volumes:
     pgdata:
+    redis_data:
+    redis_insight_data:

@@ -1,0 +1,369 @@
+{
+	"uid": "performance",
+	"title": "Performance",
+	"tags": ["app", "performance"],
+	"timezone": "browser",
+	"schemaVersion": 39,
+	"version": 1,
+	"refresh": "30s",
+	"time": {
+		"from": "now-6h",
+		"to": "now"
+	},
+	"panels": [
+		{
+			"id": 109,
+			"title": "Response Time Overview",
+			"type": "stat",
+			"gridPos": { "h": 4, "w": 10, "x": 0, "y": 0 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "sum(rate(request_duration_seconds_sum[5m])) / sum(rate(request_duration_seconds_count[5m]))",
+					"legendFormat": "Total Average"
+				}
+			],
+			"fieldConfig": {
+				"defaults": {
+					"color": { "mode": "thresholds" },
+					"thresholds": {
+						"steps": [
+							{ "color": "green", "value": null },
+							{ "color": "yellow", "value": 5 },
+							{ "color": "orange", "value": 10 },
+							{ "color": "red", "value": 15 }
+						]
+					},
+					"unit": "ms",
+					"decimals": 3
+				}
+			},
+			"options": {
+				"reduceOptions": { "calcs": ["lastNotNull"], "values": false },
+				"colorMode": "background",
+				"graphMode": "area",
+				"orientation": "auto"
+			}
+		},
+		{
+			"id": 110,
+			"title": "Response Time Breakdown by Endpoint",
+			"type": "table",
+			"gridPos": { "h": 6, "w": 12, "x": 0, "y": 4 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"datasource": { "type": "prometheus", "uid": "prometheus" },
+					"editorMode": "code",
+					"expr": "(sum(rate(request_duration_seconds_sum[5m])) by (url) / sum(rate(request_duration_seconds_count[5m])) by (url)) or (sum(request_duration_seconds_count) by (url) * 0)",
+					"legendFormat": "{{url}}",
+					"instant": true,
+					"range": false,
+					"format": "table"
+				}
+			],
+			"transformations": [
+				{
+					"id": "organize",
+					"options": {
+						"excludeByName": {
+							"Time": true
+						},
+						"indexByName": {},
+						"renameByName": {
+							"Value": "Avg Duration"
+						}
+					}
+				}
+			],
+			"fieldConfig": {
+				"defaults": {
+					"unit": "s",
+					"decimals": 3,
+					"custom": {
+						"displayMode": "color-background"
+					},
+					"thresholds": {
+						"steps": [
+							{ "color": "green", "value": null },
+							{ "color": "yellow", "value": 0.5 },
+							{ "color": "red", "value": 2.0 }
+						]
+					}
+				}
+			}
+		},
+		{
+			"id": 2,
+			"title": "p95 Response Time",
+			"type": "stat",
+			"gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "histogram_quantile(0.95, rate(request_duration_seconds_bucket[5m]))",
+					"legendFormat": "p95"
+				}
+			],
+			"fieldConfig": {
+				"defaults": {
+					"color": { "mode": "thresholds" },
+					"thresholds": {
+						"steps": [
+							{ "color": "green", "value": null },
+							{ "color": "yellow", "value": 15 },
+							{ "color": "orange", "value": 30 },
+							{ "color": "red", "value": 60 }
+						]
+					},
+					"unit": "s",
+					"decimals": 1
+				}
+			},
+			"options": {
+				"reduceOptions": { "calcs": ["lastNotNull"] },
+				"colorMode": "background",
+				"graphMode": "area"
+			}
+		},
+		{
+			"id": 3,
+			"title": "Requests / min",
+			"type": "stat",
+			"gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "rate(request_duration_seconds_count[5m]) * 60",
+					"legendFormat": "RPM"
+				}
+			],
+			"fieldConfig": {
+				"defaults": {
+					"color": { "mode": "thresholds" },
+					"thresholds": {
+						"steps": [
+							{ "color": "blue", "value": null },
+							{ "color": "green", "value": 1 }
+						]
+					},
+					"unit": "reqpm",
+					"decimals": 1
+				}
+			},
+			"options": {
+				"reduceOptions": { "calcs": ["lastNotNull"] },
+				"colorMode": "background",
+				"graphMode": "area"
+			}
+		},
+		{
+			"id": 4,
+			"title": "Errors (1h)",
+			"type": "stat",
+			"gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "round(sum(increase(errors_total[1h])))",
+					"legendFormat": "Errors"
+				}
+			],
+			"fieldConfig": {
+				"defaults": {
+					"color": { "mode": "thresholds" },
+					"thresholds": {
+						"steps": [
+							{ "color": "green", "value": null },
+							{ "color": "yellow", "value": 1 },
+							{ "color": "red", "value": 5 }
+						]
+					},
+					"unit": "short"
+				}
+			},
+			"options": {
+				"reduceOptions": { "calcs": ["lastNotNull"] },
+				"colorMode": "background",
+				"graphMode": "area"
+			}
+		},
+		{
+			"id": 5,
+			"title": "Response Time Percentiles",
+			"type": "timeseries",
+			"gridPos": { "h": 9, "w": 12, "x": 0, "y": 4 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "histogram_quantile(0.50, sum(rate(request_duration_seconds_bucket[5m])) by (le, method, url))",
+					"legendFormat": "p50 {{method}} {{url}}"
+				},
+				{
+					"expr": "histogram_quantile(0.90, sum(rate(request_duration_seconds_bucket[5m])) by (le, method, url))",
+					"legendFormat": "p90 {{method}} {{url}}"
+				},
+				{
+					"expr": "histogram_quantile(0.95, sum(rate(request_duration_seconds_bucket[5m])) by (le, method, url))",
+					"legendFormat": "p95 {{method}} {{url}}"
+				},
+				{
+					"expr": "histogram_quantile(0.99, sum(rate(request_duration_seconds_bucket[5m])) by (le, method, url))",
+					"legendFormat": "p99 {{method}} {{url}}"
+				}
+			],
+			"fieldConfig": {
+				"defaults": {
+					"color": { "mode": "palette-classic" },
+					"custom": {
+						"drawStyle": "line",
+						"fillOpacity": 10,
+						"lineWidth": 2,
+						"pointSize": 5
+					},
+					"unit": "s"
+				}
+			},
+			"options": {
+				"legend": {
+					"displayMode": "table",
+					"placement": "bottom",
+					"calcs": ["mean", "max", "lastNotNull"]
+				},
+				"tooltip": { "mode": "multi" }
+			}
+		},
+		{
+			"id": 6,
+			"title": "Request Duration Distribution",
+			"type": "heatmap",
+			"gridPos": { "h": 9, "w": 12, "x": 12, "y": 4 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "increase(request_duration_seconds_bucket[$__rate_interval])",
+					"legendFormat": "{{le}}",
+					"format": "heatmap"
+				}
+			],
+			"options": {
+				"calculate": false,
+				"color": {
+					"scheme": "Turbo",
+					"mode": "scheme"
+				},
+				"yAxis": {
+					"unit": "s"
+				},
+				"cellGap": 1,
+				"tooltip": { "show": true }
+			}
+		},
+		{
+			"id": 7,
+			"title": "Errors by Type",
+			"type": "timeseries",
+			"gridPos": { "h": 8, "w": 12, "x": 0, "y": 13 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "increase(errors_total[$__rate_interval])",
+					"legendFormat": "{{type}}"
+				}
+			],
+			"fieldConfig": {
+				"defaults": {
+					"color": { "mode": "palette-classic" },
+					"custom": {
+						"drawStyle": "bars",
+						"fillOpacity": 60,
+						"stacking": { "mode": "normal" }
+					},
+					"unit": "short"
+				}
+			},
+			"options": {
+				"legend": {
+					"displayMode": "table",
+					"placement": "bottom",
+					"calcs": ["sum"]
+				},
+				"tooltip": { "mode": "multi" }
+			}
+		},
+		{
+			"id": 8,
+			"title": "RPS (requests per second)",
+			"type": "timeseries",
+			"gridPos": { "h": 8, "w": 12, "x": 12, "y": 13 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "rate(request_duration_seconds_count[1m])",
+					"legendFormat": "RPS"
+				}
+			],
+			"fieldConfig": {
+				"defaults": {
+					"color": { "fixedColor": "blue", "mode": "fixed" },
+					"custom": {
+						"drawStyle": "line",
+						"fillOpacity": 20,
+						"lineWidth": 2
+					},
+					"unit": "reqps",
+					"decimals": 2
+				}
+			},
+			"options": {
+				"legend": { "displayMode": "list", "placement": "bottom" },
+				"tooltip": { "mode": "single" }
+			}
+		},
+		{
+			"id": 5,
+			"title": "Response Time Percentiles",
+			"type": "timeseries",
+			"gridPos": { "h": 9, "w": 12, "x": 0, "y": 4 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "histogram_quantile(0.50, sum(rate(request_duration_seconds_bucket[5m])) by (le))",
+					"legendFormat": "p50"
+				},
+				{
+					"expr": "histogram_quantile(0.90, sum(rate(request_duration_seconds_bucket[5m])) by (le))",
+					"legendFormat": "p90"
+				},
+				{
+					"expr": "histogram_quantile(0.95, sum(rate(request_duration_seconds_bucket[5m])) by (le))",
+					"legendFormat": "p95"
+				},
+				{
+					"expr": "histogram_quantile(0.99, sum(rate(request_duration_seconds_bucket[5m])) by (le))",
+					"legendFormat": "p99"
+				}
+			],
+			"fieldConfig": {
+				"defaults": {
+					"color": { "mode": "palette-classic" },
+					"custom": {
+						"drawStyle": "line",
+						"fillOpacity": 10,
+						"lineWidth": 2,
+						"pointSize": 5
+					},
+					"unit": "s"
+				}
+			},
+			"options": {
+				"legend": {
+					"displayMode": "table",
+					"placement": "bottom",
+					"calcs": ["mean", "max", "lastNotNull"]
+				},
+				"tooltip": { "mode": "multi" }
+			}
+		}
+	]
+}

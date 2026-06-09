@@ -6,38 +6,42 @@ import (
 	"flag"
 	"log"
 	"net/http"
+	_ "net/http/pprof"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
-	_ "github.com/internships-backend/test-backend-barashF/docs"
-	httpSwagger "github.com/swaggo/http-swagger"
+	bookingRepository "github.com/internships-backend/test-backend-barashF/internal/repository/booking"
+	roomRepository "github.com/internships-backend/test-backend-barashF/internal/repository/room"
+	scheduleRepository "github.com/internships-backend/test-backend-barashF/internal/repository/schedule"
+
+	authService "github.com/internships-backend/test-backend-barashF/internal/service/auth"
+	bookingService "github.com/internships-backend/test-backend-barashF/internal/service/booking"
+	roomService "github.com/internships-backend/test-backend-barashF/internal/service/room"
+	scheduleSrvice "github.com/internships-backend/test-backend-barashF/internal/service/schedule" // Обратите внимание на опечатку в вашем коде: scheduleSrvice
+	slotService "github.com/internships-backend/test-backend-barashF/internal/service/slot"
 
 	"github.com/go-chi/chi/v5"
+	_ "github.com/internships-backend/test-backend-barashF/docs"
 	"github.com/internships-backend/test-backend-barashF/internal/config"
 	"github.com/internships-backend/test-backend-barashF/internal/gateway"
 	authHandler "github.com/internships-backend/test-backend-barashF/internal/handler/auth"
 	bookingHandler "github.com/internships-backend/test-backend-barashF/internal/handler/booking"
 	roomHandler "github.com/internships-backend/test-backend-barashF/internal/handler/room"
 	scheduleHandler "github.com/internships-backend/test-backend-barashF/internal/handler/schedule"
+
 	slotHandler "github.com/internships-backend/test-backend-barashF/internal/handler/slot"
 	"github.com/internships-backend/test-backend-barashF/internal/logger"
 	"github.com/internships-backend/test-backend-barashF/internal/middleware"
-	bookingRepository "github.com/internships-backend/test-backend-barashF/internal/repository/booking"
-	roomRepository "github.com/internships-backend/test-backend-barashF/internal/repository/room"
-	scheduleRepository "github.com/internships-backend/test-backend-barashF/internal/repository/schedule"
 	slotRepository "github.com/internships-backend/test-backend-barashF/internal/repository/slot"
 	userRepo "github.com/internships-backend/test-backend-barashF/internal/repository/user"
 	"github.com/internships-backend/test-backend-barashF/internal/repository/utils/transaction"
-	authService "github.com/internships-backend/test-backend-barashF/internal/service/auth"
-	bookingService "github.com/internships-backend/test-backend-barashF/internal/service/booking"
-	roomService "github.com/internships-backend/test-backend-barashF/internal/service/room"
-	scheduleSrvice "github.com/internships-backend/test-backend-barashF/internal/service/schedule"
-	slotService "github.com/internships-backend/test-backend-barashF/internal/service/slot"
 	"github.com/internships-backend/test-backend-barashF/pkg/database"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joho/godotenv"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+	httpSwagger "github.com/swaggo/http-swagger"
 )
 
 // @title           Room Booking Service
@@ -56,6 +60,13 @@ func main() {
 	//nolint:errcheck
 	defer appLogger.Sync()
 
+	go func() {
+		log.Println("Starting pprof server on :6060")
+		if err := http.ListenAndServe("0.0.0.0:6060", nil); err != nil {
+			log.Printf("pprof server failed: %v", err)
+		}
+	}()
+
 	err = godotenv.Load()
 	if err != nil {
 		appLogger.Warn("error loading .env file", logger.F("error", err.Error()))
@@ -69,7 +80,6 @@ func main() {
 	}
 
 	transactionManager := transaction.NewManager(dbPool)
-
 	userRepository := userRepo.NewRepository(transactionManager)
 	slotRepository := slotRepository.NewRepository(transactionManager)
 	roomRepository := roomRepository.NewRepository(transactionManager)
@@ -158,40 +168,47 @@ func initRouter(auth *authHandler.Controller,
 ) *chi.Mux {
 	r := chi.NewRouter()
 
-	r.Get("/swagger/*", httpSwagger.WrapHandler)
-	r.Get("/_info", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		//nolint:errcheck
-		w.Write([]byte(`{"status":"OK"}`))
-	})
+	r.Handle("/metrics", promhttp.Handler())
 
-	r.Post("/register", auth.Register)
-	r.Post("/login", auth.Login)
-	r.Post("/dummyLogin", auth.DummyLogin)
+	r.Group(func(r chi.Router) {
+		r.Use(middleware.MetricsMiddleware(logger))
 
-	r.Route("/rooms", func(r chi.Router) {
-		r.Use(middleware.AuthMiddleware(cfg.JWTSecret, logger))
-
-		r.With(middleware.RolesAllowed(logger, "admin")).Post("/{roomId}/schedule/create", schedule.Create)
-		r.With(middleware.RolesAllowed(logger, "admin")).Post("/create", room.Create)
-
-		r.Get("/list", room.List)
-		r.Get("/{roomId}/slots/list", slot.GetAvailableSlots)
-	})
-
-	r.Route("/bookings", func(r chi.Router) {
-		r.Use(middleware.AuthMiddleware(cfg.JWTSecret, logger))
-
-		r.Group(func(r chi.Router) {
-			r.Use(middleware.RolesAllowed(logger, "user"))
-			r.Post("/create", booking.Create)
-			r.Get("/my", booking.GetUserBookings)
-			r.Post("/{bookingId}/cancel", booking.CancelBooking)
+		r.Get("/swagger/*", httpSwagger.WrapHandler)
+		r.Get("/_info", func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusOK)
+			//nolint:errcheck
+			w.Write([]byte(`{"status":"OK"}`))
 		})
 
-		r.With(middleware.RolesAllowed(logger, "admin")).Get("/list", booking.GetAllBookings)
+		r.Post("/register", auth.Register)
+		r.Post("/login", auth.Login)
+		r.Post("/dummyLogin", auth.DummyLogin)
+
+		r.Route("/rooms", func(r chi.Router) {
+			r.Use(middleware.AuthMiddleware(cfg.JWTSecret, logger))
+
+			r.With(middleware.RolesAllowed(logger, "admin")).Post("/{roomId}/schedule/create", schedule.Create)
+			r.With(middleware.RolesAllowed(logger, "admin")).Post("/create", room.Create)
+
+			r.Get("/list", room.List)
+			r.Get("/{roomId}/slots/list", slot.GetAvailableSlots)
+		})
+
+		r.Route("/bookings", func(r chi.Router) {
+			r.Use(middleware.AuthMiddleware(cfg.JWTSecret, logger))
+
+			r.Group(func(r chi.Router) {
+				r.Use(middleware.RolesAllowed(logger, "user"))
+				r.Post("/create", booking.Create)
+				r.Get("/my", booking.GetUserBookings)
+				r.Post("/{bookingId}/cancel", booking.CancelBooking)
+			})
+
+			r.With(middleware.RolesAllowed(logger, "admin")).Get("/list", booking.GetAllBookings)
+		})
 	})
+
 	return r
 }
 
