@@ -1,7 +1,5 @@
-name: DevSecOps Security Scan
+name: DevSecOps Advanced Scan
 
-# Настраиваем триггеры: пайплайн будет запускаться при каждом push в ветку main
-# и при создании Pull Request (когда кто-то хочет влить свой код в main)
 on:
     push:
         branches: ["main", "master"]
@@ -10,20 +8,33 @@ on:
 
 jobs:
     trivy-scan:
-        name: Run Trivy Scanner
-        runs-on: ubuntu-latest # Выделяем чистый сервер на Ubuntu для проверки
+        name: Run Trivy with Reports
+        runs-on: ubuntu-latest
 
         steps:
-            # Шаг 1: Скачиваем (клонируем) код твоего репозитория на сервер сборки
             - name: Checkout code
               uses: actions/checkout@v4
 
-            # Шаг 2: Запускаем Trivy для поиска захардкоженных секретов и паролей
-            - name: Run Trivy Vulnerability Scanner (FS and Secrets)
+            # Шаг 1: Сканируем ВСЁ, формируем отчет в формате SARIF (стандарт для GitHub), но НЕ роняем пайплайн
+            - name: Generate Security Report
               uses: aquasecurity/trivy-action@master
               with:
                   scan-type: "fs"
                   scan-ref: "."
                   scanners: "vuln,secret"
+                  format: "sarif"
+                  output: "trivy-results.sarif"
+
+            # Шаг 2: Загружаем этот отчет в интерфейс самого GitHub
+            - name: Upload Trivy scan results to GitHub Security tab
+              uses: github/codeql-action/upload-sarif@v3
+              with:
+                  sarif_file: "trivy-results.sarif"
+
+            # Шаг 3: А вот теперь делаем жесткую проверку. Если есть HIGH или CRITICAL — вот тут роняем сборку
+            - name: Block on High/Critical
+              uses: aquasecurity/security-with-trivy-action@master # упрощенный вызов для проверки условий
+              with:
+                  scan-type: "fs"
                   severity: "HIGH,CRITICAL"
-                  exit-code: "1" # Пайплайн упадет (заблокируется), если найдет HIGH или CRITICAL баги
+                  exit-code: "1"
