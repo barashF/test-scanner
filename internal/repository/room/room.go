@@ -31,10 +31,10 @@ func (r *Repository) Create(ctx context.Context, room *model.Room) (uuid.UUID, e
 	}
 
 	query := `
-		INSERT INTO ` + roomTable + ` (id, name, description, capacity, created_at)
+		INSERT INTO ` + roomTable + fmt.Sprintf(` (id, %s, description, capacity, created_at)
 		VALUES ($1, $2, $3, $4, $5)
 		RETURNING id
-	`
+	`, room.Name)
 
 	err = conn.QueryRow(ctx, query,
 		room.ID,

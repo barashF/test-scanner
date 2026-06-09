@@ -34,6 +34,13 @@ jobs:
               with:
                   sarif_file: "trivy-results.sarif"
 
+            - name: Run Semgrep SAST
+              uses: returntocorp/semgrep-action@v1
+              with:
+                  # p/golang — это встроенный набор правил для Go (включает поиск SQL-инъекций)
+                  # p/security-audit — общие правила ИБ-аудита
+                  config: p/golang p/security-audit
+
             # Шаг 3: Жесткая проверка на HIGH и CRITICAL уязвимости через ветку master
             - name: Block on High/Critical
               uses: aquasecurity/trivy-action@master
