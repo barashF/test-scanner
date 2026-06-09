@@ -33,7 +33,7 @@ jobs:
 
             # Шаг 3: А вот теперь делаем жесткую проверку. Если есть HIGH или CRITICAL — вот тут роняем сборку
             - name: Block on High/Critical
-              uses: aquasecurity/security-with-trivy-action@master # упрощенный вызов для проверки условий
+              uses: aquasecurity/security-action@master # упрощенный вызов для проверки условий
               with:
                   scan-type: "fs"
                   severity: "HIGH,CRITICAL"
