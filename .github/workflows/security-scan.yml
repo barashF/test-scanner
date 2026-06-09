@@ -10,14 +10,18 @@ jobs:
     trivy-scan:
         name: Run Trivy with Reports
         runs-on: ubuntu-latest
+        # Даем пайплайну права на запись отчетов во вкладку Security
+        permissions:
+            security-events: write
+            contents: read
 
         steps:
             - name: Checkout code
               uses: actions/checkout@v4
 
-            # Шаг 1: Сканируем ВСЁ, формируем отчет в формате SARIF (стандарт для GitHub), но НЕ роняем пайплайн
+            # Шаг 1: Сканируем ВСЁ и генерируем подробный отчет для вкладки Security (Мягкая проверка, не роняет пайплайн)
             - name: Generate Security Report
-              uses: aquasecurity/trivy-action@master
+              uses: aquasecurity/trivy-action@0.28.0
               with:
                   scan-type: "fs"
                   scan-ref: "."
@@ -25,16 +29,19 @@ jobs:
                   format: "sarif"
                   output: "trivy-results.sarif"
 
-            # Шаг 2: Загружаем этот отчет в интерфейс самого GitHub
-            - name: Upload Trivy scan results to GitHub Security tab
+            # Шаг 2: Загружаем сгенерированный отчет в интерфейс GitHub (вкладка Security -> Code scanning)
+            - name: Upload Trivy scan results to GitHub Security
               uses: github/codeql-action/upload-sarif@v3
               with:
                   sarif_file: "trivy-results.sarif"
 
-            # Шаг 3: А вот теперь делаем жесткую проверку. Если есть HIGH или CRITICAL — вот тут роняем сборку
+            # Шаг 3: Жесткая проверка. Сканируем еще раз, но только на HIGH и CRITICAL уязвимости.
+            # Если они найдутся — именно этот шаг выдаст exit-code 1 и заблокирует деплой.
             - name: Block on High/Critical
-              uses: aquasecurity/security-action@master # упрощенный вызов для проверки условий
+              uses: aquasecurity/trivy-action@0.28.0
               with:
                   scan-type: "fs"
+                  scan-ref: "."
+                  scanners: "vuln,secret"
                   severity: "HIGH,CRITICAL"
                   exit-code: "1"
