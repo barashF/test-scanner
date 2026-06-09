@@ -40,6 +40,7 @@ jobs:
                   # p/golang — это встроенный набор правил для Go (включает поиск SQL-инъекций)
                   # p/security-audit — общие правила ИБ-аудита
                   config: p/golang p/security-audit
+                  audit: true
 
             # Шаг 3: Жесткая проверка на HIGH и CRITICAL уязвимости через ветку master
             - name: Block on High/Critical
