@@ -10,7 +10,6 @@ jobs:
     trivy-scan:
         name: Run Trivy with Reports
         runs-on: ubuntu-latest
-        # Даем пайплайну права на запись отчетов во вкладку Security
         permissions:
             security-events: write
             contents: read
@@ -19,9 +18,9 @@ jobs:
             - name: Checkout code
               uses: actions/checkout@v4
 
-            # Шаг 1: Сканируем ВСЁ и генерируем подробный отчет для вкладки Security (Мягкая проверка, не роняет пайплайн)
+            # Шаг 1: Сканируем всё через ветку master официального экшена
             - name: Generate Security Report
-              uses: aquasecurity/trivy-action@0.28.0
+              uses: aquasecurity/trivy-action@master
               with:
                   scan-type: "fs"
                   scan-ref: "."
@@ -29,16 +28,15 @@ jobs:
                   format: "sarif"
                   output: "trivy-results.sarif"
 
-            # Шаг 2: Загружаем сгенерированный отчет в интерфейс GitHub (вкладка Security -> Code scanning)
+            # Шаг 2: Загружаем отчет в GitHub
             - name: Upload Trivy scan results to GitHub Security
               uses: github/codeql-action/upload-sarif@v3
               with:
                   sarif_file: "trivy-results.sarif"
 
-            # Шаг 3: Жесткая проверка. Сканируем еще раз, но только на HIGH и CRITICAL уязвимости.
-            # Если они найдутся — именно этот шаг выдаст exit-code 1 и заблокирует деплой.
+            # Шаг 3: Жесткая проверка на HIGH и CRITICAL уязвимости через ветку master
             - name: Block on High/Critical
-              uses: aquasecurity/trivy-action@0.28.0
+              uses: aquasecurity/trivy-action@master
               with:
                   scan-type: "fs"
                   scan-ref: "."
