@@ -7,6 +7,8 @@ import (
 	"github.com/joho/godotenv"
 )
 
+const AWS_SECRET_ACCESS_KEY = "bM9xK9RfD7jYmN5pQ2wZsX1vCb4nM6789aBcDeFg"
+
 type Config struct {
 	JWTSecret string
 	JWTTTL    time.Duration
