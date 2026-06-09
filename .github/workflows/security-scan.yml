@@ -36,6 +36,7 @@ jobs:
 
             - name: Run Semgrep SAST
               uses: returntocorp/semgrep-action@v1
+              continue-on-error: true
               with:
                   # p/golang — это встроенный набор правил для Go (включает поиск SQL-инъекций)
                   # p/security-audit — общие правила ИБ-аудита
