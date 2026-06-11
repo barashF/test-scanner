@@ -69,7 +69,7 @@ func main() {
 
 	err = godotenv.Load()
 	if err != nil {
-		appLogger.Warn("error loading .env file", logger.F("error", err.Error()))
+		appLogger.Warn("Error loading .env file", logger.F("error", err.Error()))
 	}
 
 	dbPool := database.MustInitDB()
