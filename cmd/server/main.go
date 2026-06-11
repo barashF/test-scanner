@@ -76,7 +76,7 @@ func main() {
 
 	err = database.SeedUsers(context.Background(), dbPool, appLogger)
 	if err != nil {
-		appLogger.Warn("err create test users in database", logger.F("error", err.Error()))
+		appLogger.Warn("Err create test users in database", logger.F("error", err.Error()))
 	}
 
 	transactionManager := transaction.NewManager(dbPool)
